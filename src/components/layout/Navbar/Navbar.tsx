@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "cn";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -27,7 +27,7 @@ export default function Navbar() {
   const pathName = usePathname();
 
   return (
-    <div>
+    <div className="sticky top-0 z-10 bg-white">
       <div className="bg-[#1d2c26] px-4 py-2.5 text-center text-xs tracking-wide text-white">
         Good tech. Great possibilities.{" "}
         <span className="ml-2 text-[#ceec9b]">
@@ -65,7 +65,10 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            <Link href={"/cart"}>
+              <ShoppingCart className="mr-2 h-5 w-5" />
+            </Link>
             <a
               href="#collection"
               className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"

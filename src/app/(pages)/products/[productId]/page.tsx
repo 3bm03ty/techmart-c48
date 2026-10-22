@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/utils";
 import { ArrowLeft, ChevronRight, Package, Star } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AddToCartBtn from "@/components/product/AddToCartBtn";
 
 interface ProductDetailsProps {
   params: Promise<{ productId: string }>;
@@ -143,6 +144,9 @@ export default async function ProductDetails({ params }: ProductDetailsProps) {
                   </div>
                 ))}
             </dl>
+          </div>
+          <div className="mt-8">
+            <AddToCartBtn productId={productDetails._id} />
           </div>
           <Link
             href="/products"

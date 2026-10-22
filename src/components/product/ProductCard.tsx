@@ -4,17 +4,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-  ShoppingCart,
-} from "lucide-react";
+import { Heart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
-
+import AddToCartBtn from "./AddToCartBtn";
 export interface ProductCardProps {
   title: string;
   price: number;
@@ -46,13 +39,13 @@ export function ProductCard({
   };
 
   return (
-    <Card className="w-full max-w-sm overflow-hidden group bg-backgrou text-foreground shadow-xl hover:shadow-lg transition-all duration-300 rounded-md p-0">
+    <Card className="w-full max-w-sm overflow-hidden group bg-background text-foreground shadow-xl hover:shadow-lg transition-all duration-300 rounded-md p-0">
       {/* Image carousel */}
       <div className="relative aspect-3/4 overflow-hidden p-0">
         <motion.img
           key={currentImageIndex}
           src={images[currentImageIndex]}
-          alt={`${name} - View ${currentImageIndex + 1}`}
+          alt={`${title} - View ${currentImageIndex + 1}`}
           className="object-cover w-full h-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -146,19 +139,7 @@ export function ProductCard({
 
       {/* Footer */}
       <CardFooter className="p-4">
-        <Button className="w-full shrink">
-          {false ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Adding...
-            </>
-          ) : (
-            <>
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Add to Cart
-            </>
-          )}
-        </Button>
+        <AddToCartBtn productId={_id} />
       </CardFooter>
     </Card>
   );

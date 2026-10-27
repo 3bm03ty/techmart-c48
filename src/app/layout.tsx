@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/layout/Navbar/Navbar";
-import Footer from "@/components/layout/Footer/Footer";
-import { Toaster } from "@/components/ui/toast";
+import MainProvider from "@/providers/MainProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -37,10 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <div className="py-5">{children}</div>
-        <Footer />
-        <Toaster />
+        <MainProvider>{children}</MainProvider>
       </body>
     </html>
   );

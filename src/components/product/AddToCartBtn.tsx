@@ -1,17 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2, ShoppingCart } from "lucide-react";
 import { toast } from "../ui/toast";
 import apiServices from "@/services/apiServices";
+import { counterContext } from "@/contexts/counterContext";
 
 export default function AddToCartBtn({ productId }: { productId: string }) {
   const [IsAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const { setNumOfCartItems } = useContext(counterContext);
 
   async function addProductToCart() {
     setIsAddingToCart(true);
     try {
       const response = await apiServices.addProductToCart(productId);
+      console.log(response.numOfCartItems);
+      
+      setNumOfCartItems(response.numOfCartItems);
       toast.add({
         title: response.status ?? response.statusMsg,
         description: response.message,

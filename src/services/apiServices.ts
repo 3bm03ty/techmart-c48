@@ -1,4 +1,4 @@
-import { CartResponse, ProductDetailsResponse, ProductsResponse } from "@/types/response";
+import { CartResponse, CheckoutResponse, ProductDetailsResponse, ProductsResponse } from "@/types/response";
 
 
 class ApiServices {
@@ -65,6 +65,32 @@ class ApiServices {
             method: "delete",
             headers: this.#headers,
             cache: "no-cache"
+        })
+
+        const data = await response.json()
+        return data;
+    }
+
+    async updateProductCount(productId: string, count: number): Promise<CartResponse> {
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/v2/cart/" + productId, {
+            method: 'put',
+            headers: this.#headers,
+            body: JSON.stringify({
+                count
+            })
+
+        })
+
+        const data = await response.json()
+        return data;
+    }
+
+
+    async checkout(cartId: string, shippingAddress: any): Promise<CheckoutResponse> {
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/api/v1/orders/checkout-session/${cartId}?url=http://localhost:3000`, {
+            method: "post",
+            headers: this.#headers,
+            body: JSON.stringify(shippingAddress)
         })
 
         const data = await response.json()

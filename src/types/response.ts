@@ -52,5 +52,16 @@ export interface Product {
 };
 
 
+export type CheckoutResponse = {
+    "status": string;
+    "session": {
+        "url": string;
+        "success_url": string;
+        "cancel_url": string
+    }
+}
+
+
+
 export type ProductsResponse = ResponseT<ProductI>
 export type ProductDetailsResponse = { data: ProductI } 

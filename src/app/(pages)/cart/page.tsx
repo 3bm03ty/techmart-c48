@@ -4,6 +4,9 @@ import apiServices from "@/services/apiServices";
 export default async function Cart() {
   const response = await apiServices.getUserCart().catch(() => null);
 
+  console.log(response?.numOfCartItems);
+  
+
   if (!response?.data?.products) {
     return (
       <CartContents

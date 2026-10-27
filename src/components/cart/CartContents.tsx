@@ -14,7 +14,8 @@ import type { CartResponse } from "@/types/response";
 import { Button } from "../ui/button";
 import CartProduct from "./CartProduct";
 import apiServices from "@/services/apiServices";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { counterContext } from "@/contexts/counterContext";
 
 export default function CartContents({
   cartResponse,
@@ -28,10 +29,20 @@ export default function CartContents({
   const products = innerCartResponse?.data.products ?? [];
   const [isClearing, setIsClearing] = useState(false);
 
+  const { setNumOfCartItems } = useContext(counterContext);
+
+  useEffect(() => {
+    setNumOfCartItems(cartResponse?.numOfCartItems);
+    if (cartResponse != innerCartResponse) {
+      setInnerCartResponse(cartResponse);
+    }
+  }, []);
+
   async function removeProductFromCart(productId: string) {
     const response = await apiServices.removeProductFromCart(productId);
     // setState => rerender
     setInnerCartResponse(response);
+    setNumOfCartItems(response.numOfCartItems);
   }
 
   async function clearCart() {
@@ -40,6 +51,12 @@ export default function CartContents({
     // setState => rerender
     setInnerCartResponse(response);
     setIsClearing(false);
+    setNumOfCartItems(0);
+  }
+
+  async function updateProductCount(productId: string, count: number) {
+    const response = await apiServices.updateProductCount(productId, count);
+    setInnerCartResponse(response);
   }
 
   return (
@@ -121,6 +138,7 @@ export default function CartContents({
                     price={price}
                     product={product}
                     removeProductFromCart={removeProductFromCart}
+                    updateProductCount={updateProductCount}
                   />
                 ))}
               </ul>
@@ -185,13 +203,14 @@ export default function CartContents({
               <p id="promo-note" className="mt-2 px-1 text-xs text-neutral-500">
                 Promo codes are not available yet.
               </p>
-              <button
+              <Link
                 type="button"
                 aria-describedby="checkout-note"
                 className="mt-5 flex min-h-13 w-full items-center justify-center gap-4 rounded-full bg-black px-5 text-sm font-medium text-white opacity-50 disabled:cursor-not-allowed"
+                href={"/checkout/" + cartResponse?.cartId}
               >
                 Go to Checkout <ArrowRight size={20} aria-hidden="true" />
-              </button>
+              </Link>
               <p
                 id="checkout-note"
                 className="mt-2 text-center text-xs text-neutral-500"

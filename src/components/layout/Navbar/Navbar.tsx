@@ -1,8 +1,10 @@
 "use client";
+import { counterContext } from "@/contexts/counterContext";
 import { cn } from "cn";
 import { ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useContext } from "react";
 
 const navLinks = [
   {
@@ -21,10 +23,15 @@ const navLinks = [
     title: "Cart",
     href: "/cart",
   },
+  {
+    title: "Orders",
+    href: "/allorders",
+  },
 ];
 
 export default function Navbar() {
   const pathName = usePathname();
+  const { numOfCartItems } = useContext(counterContext);
 
   return (
     <div className="sticky top-0 z-10 bg-white">
@@ -67,7 +74,12 @@ export default function Navbar() {
           </nav>
           <div className="flex gap-3 items-center">
             <Link href={"/cart"}>
-              <ShoppingCart className="mr-2 h-5 w-5" />
+              <div className="relative">
+                <span className="absolute bottom-1/2 bg-yellow-500 w-6 h-6 flex justify-center items-center rounded-full -inset-e-4">
+                  {numOfCartItems}
+                </span>
+                <ShoppingCart className="mr-2 h-5 w-5 " />
+              </div>
             </Link>
             <a
               href="#collection"

@@ -1,4 +1,4 @@
-import { CartResponse, CheckoutResponse, ProductDetailsResponse, ProductsResponse } from "@/types/response";
+import { CartResponse, CheckoutResponse, ProductDetailsResponse, ProductsResponse, SignInResponse } from "@/types/response";
 
 
 class ApiServices {
@@ -95,6 +95,21 @@ class ApiServices {
 
         const data = await response.json()
         return data;
+    }
+
+
+    async signin(email: string, password: string): Promise<SignInResponse> {
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/signin", {
+            method: "post",
+            headers: this.#headers,
+            body: JSON.stringify({
+                email,
+                password
+            })
+        })
+
+        const data = await response.json()
+        return data
     }
 }
 

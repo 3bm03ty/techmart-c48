@@ -61,6 +61,17 @@ export type CheckoutResponse = {
     }
 }
 
+export type SignInResponse = {
+    message: string;
+    user?: {
+        name: string;
+        email: string;
+        role: string;
+    },
+    token?: string;
+    statusMsg?: string
+}
+
 
 
 export type ProductsResponse = ResponseT<ProductI>

@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { counterContext } from "@/contexts/counterContext";
 import { cn } from "cn";
 import { ArrowRight, ShoppingCart, Zap } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
@@ -33,6 +35,8 @@ export default function Navbar() {
   const pathName = usePathname();
   const { numOfCartItems } = useContext(counterContext);
 
+  const session = useSession();  
+
   return (
     <div className="sticky top-0 z-10 bg-white">
       <div className="bg-[#1d2c26] px-4 py-2.5 text-center text-xs tracking-wide text-white">
@@ -53,52 +57,69 @@ export default function Navbar() {
             </span>
             techmart<span className="text-[#63893d]">.</span>
           </Link>
-          <nav
-            aria-label="Main navigation"
-            className="order-3 flex w-full justify-center gap-7 border-t border-[#e5e7df] pt-4 text-sm font-medium sm:order-none sm:w-auto sm:border-0 sm:pt-0"
-          >
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "transition-colors hover:text-[#64843f]",
-                  pathName.includes(link.href)
-                    ? "text-[#64843f] font-bold"
-                    : "",
-                )}
-              >
-                {link.title}
-              </Link>
-            ))}
-          </nav>
+          {session.status != "loading" && (
+            <nav
+              aria-label="Main navigation"
+              className="order-3 flex w-full justify-center gap-7 border-t border-[#e5e7df] pt-4 text-sm font-medium sm:order-none sm:w-auto sm:border-0 sm:pt-0"
+            >
+              {navLinks
+                .filter((el) => {
+                  return !(
+                    session.status == "unauthenticated" &&
+                    (el.href == "/allorders" || el.href == "/cart")
+                  );
+                })
+                .map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "transition-colors hover:text-[#64843f]",
+                      pathName.includes(link.href)
+                        ? "text-[#64843f] font-bold"
+                        : "",
+                    )}
+                  >
+                    {link.title}
+                  </Link>
+                ))}
+            </nav>
+          )}
           <div className="flex gap-3 items-center">
-            <Link href={"/cart"}>
-              <div className="relative">
-                <span className="absolute bottom-1/2 bg-yellow-500 w-6 h-6 flex justify-center items-center rounded-full -inset-e-4">
-                  {numOfCartItems}
-                </span>
-                <ShoppingCart className="mr-2 h-5 w-5 " />
-              </div>
-            </Link>
-            <a
-              href="#collection"
-              className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
-            >
-              Sign In
-            </a>
-            <a
-              href="#collection"
-              className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
-            >
-              Sign Up
-            </a>
-            <a
-              href="#collection"
-              className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
-            >
-              Sign Out
-            </a>
+            {session.status == "authenticated" && (
+              <Link href={"/cart"}>
+                <div className="relative">
+                  <span className="absolute bottom-1/2 bg-yellow-500 w-6 h-6 flex justify-center items-center rounded-full -inset-e-4">
+                    {numOfCartItems}
+                  </span>
+                  <ShoppingCart className="mr-2 h-5 w-5 " />
+                </div>
+              </Link>
+            )}
+            {session.status == "unauthenticated" && (
+              <>
+                <Link
+                  href="/api/auth/signin"
+                  className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
+                >
+                  Sign In
+                </Link>
+                <a
+                  href="#collection"
+                  className="flex items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
+                >
+                  Sign Up
+                </a>
+              </>
+            )}
+            {session.status == "authenticated" && (
+              <Button
+                onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+                className="flex ms-10 items-center gap-2 rounded-full border border-[#d9dfd3] px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#eaf1e0]"
+              >
+                Sign Out
+              </Button>
+            )}
           </div>
         </header>
       </div>

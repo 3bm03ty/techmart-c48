@@ -15,7 +15,7 @@ import {
   Watch,
   Zap,
 } from "lucide-react";
-import apiServices from "@/services/apiServices";
+import CounterWrapper from "@/components/home/CounterWrapper";
 
 export const metadata: Metadata = {
   title: "TechMart | A little upgrade. A big difference.",
@@ -78,9 +78,6 @@ const categories = [
 ];
 
 export default function Home() {
-
-
-
   return (
     <div className="min-h-screen bg-[#fafaf8] font-sans text-[#192321] selection:bg-[#c8ed79] [&_a]:outline-offset-4 [&_summary]:outline-offset-4">
       <main
@@ -96,6 +93,7 @@ export default function Home() {
               <span className="size-1.5 shrink-0 rounded-full bg-[#577941]" />{" "}
               EVERYDAY TECH. EXTRAORDINARY POSSIBILITIES.
             </p>
+            <CounterWrapper />
             <h1
               id="hero-title"
               className="max-w-xl text-[clamp(2.7rem,5.3vw,4.6rem)] leading-[1.04] font-semibold tracking-[-0.065em]"

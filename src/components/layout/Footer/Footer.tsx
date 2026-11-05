@@ -1,11 +1,15 @@
+import { RootState } from "@/redux/store";
 import { ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function Footer() {
+  const { count } = useSelector((state: RootState) => state.counter);
+
   return (
     <footer className="border-t border-[#e2e5dc]">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 py-7 text-xs sm:flex-row sm:px-8 lg:px-12">
         <a href="#" className="text-lg font-extrabold tracking-[-0.07em]">
-          techmart<span className="text-[#63893d]">.</span>
+          techmart<span className="text-[#63893d]">.</span> {count}
         </a>
         <p className="text-[#74796f]">A little upgrade for your everyday.</p>
         <a

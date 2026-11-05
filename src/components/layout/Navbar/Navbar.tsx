@@ -1,12 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { counterContext } from "@/contexts/counterContext";
+import { RootState } from "@/redux/store";
 import { cn } from "cn";
 import { ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
+import { useSelector } from "react-redux";
 
 const navLinks = [
   {
@@ -35,7 +37,10 @@ export default function Navbar() {
   const pathName = usePathname();
   const { numOfCartItems } = useContext(counterContext);
 
-  const session = useSession();  
+  const session = useSession();
+
+  const { count } = useSelector((state: RootState) => state.counter);
+
 
   return (
     <div className="sticky top-0 z-10 bg-white">
@@ -55,7 +60,7 @@ export default function Navbar() {
             <span className="flex size-8 items-center justify-center rounded-lg bg-[#1d2c26] text-[#d1f391]">
               <Zap size={19} fill="currentColor" />
             </span>
-            techmart<span className="text-[#63893d]">.</span>
+            techmart<span className="text-[#63893d]">.</span> {count}
           </Link>
           {session.status != "loading" && (
             <nav

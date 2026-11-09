@@ -15,9 +15,9 @@ export default function MainProvider({ children }: { children: ReactNode }) {
       <SessionProvider>
         <CounterContextProvider>
           <Navbar />
-          <Footer />
           <div className="py-5">{children}</div>
           <Toaster />
+          <Footer />
         </CounterContextProvider>
       </SessionProvider>
     </Provider>

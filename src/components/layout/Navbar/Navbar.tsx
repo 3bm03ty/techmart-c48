@@ -31,6 +31,10 @@ const navLinks = [
     title: "Orders",
     href: "/allorders",
   },
+  {
+    title: "Addresses",
+    href: "/addresses",
+  },
 ];
 
 export default function Navbar() {
@@ -65,13 +69,13 @@ export default function Navbar() {
           {session.status != "loading" && (
             <nav
               aria-label="Main navigation"
-              className="order-3 flex w-full justify-center gap-7 border-t border-[#e5e7df] pt-4 text-sm font-medium sm:order-none sm:w-auto sm:border-0 sm:pt-0"
+              className="order-3 flex w-full flex-wrap justify-center gap-x-7 gap-y-2 border-t border-[#e5e7df] pt-4 text-sm font-medium sm:order-none sm:w-auto sm:border-0 sm:pt-0"
             >
               {navLinks
                 .filter((el) => {
                   return !(
                     session.status == "unauthenticated" &&
-                    (el.href == "/allorders" || el.href == "/cart")
+                    ["/allorders", "/cart", "/addresses"].includes(el.href)
                   );
                 })
                 .map((link) => (

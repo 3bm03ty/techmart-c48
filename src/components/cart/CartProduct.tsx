@@ -21,7 +21,7 @@ export default function CartProduct({
   count: number;
   product: Product;
   removeProductFromCart: (productId: string) => Promise<void>;
-  updateProductCount: (productId: string, count: number) => Promise<void>;
+  updateProductCount: (productId: string, count: number) => Promise<boolean>;
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isIncreasing, setIsIncreasing] = useState(false);
@@ -43,7 +43,8 @@ export default function CartProduct({
       } else {
         setIsDecreasing(true);
       }
-      await updateProductCount(product._id, newCount);
+      const updated = await updateProductCount(product._id, newCount);
+      if (!updated) setInnerCount(count);
       setIsIncreasing(false);
       setIsDecreasing(false);
     }, 500);

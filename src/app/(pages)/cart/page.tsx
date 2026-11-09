@@ -1,13 +1,19 @@
 import CartContents from "@/components/cart/CartContents";
+import { authOptions } from "@/lib/auth";
 import apiServices from "@/services/apiServices";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export default async function Cart() {
-  const response = await apiServices.getUserCart().catch(() => null);
+  const session = await getServerSession(authOptions);
+  if (!session?.user) redirect("/auth/signin");
 
-  console.log(response?.numOfCartItems);
-  
+  if (!session.user.token) {
+    return <CartContents cartResponse={null} error="Sign in again to view your cart." />;
+  }
 
-  if (!response?.data?.products) {
+  const response = await apiServices.getUserCart(session.user.token).catch(() => undefined);
+  if (response === undefined) {
     return (
       <CartContents
         cartResponse={null}
@@ -16,5 +22,5 @@ export default async function Cart() {
     );
   }
 
-  return <CartContents cartResponse={response} />;
+  return <CartContents key={response?.data?._id ?? "empty"} cartResponse={response} />;
 }

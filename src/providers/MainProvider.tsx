@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toast";
 import CounterContextProvider from "@/contexts/counterContext";
 import { store } from "@/redux/store";
 import { SessionProvider } from "next-auth/react";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 import { Provider } from "react-redux";
 
@@ -14,7 +14,9 @@ export default function MainProvider({ children }: { children: ReactNode }) {
     <Provider store={store}>
       <SessionProvider>
         <CounterContextProvider>
-          <Navbar />
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
           <div className="py-5">{children}</div>
           <Toaster />
           <Footer />

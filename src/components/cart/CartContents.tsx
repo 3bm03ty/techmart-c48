@@ -14,8 +14,10 @@ import type { CartResponse } from "@/types/response";
 import { Button } from "../ui/button";
 import CartProduct from "./CartProduct";
 import apiServices from "@/services/apiServices";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { useSession } from "next-auth/react";
 import { counterContext } from "@/contexts/counterContext";
+import { toast } from "../ui/toast";
 
 export default function CartContents({
   cartResponse,
@@ -26,37 +28,45 @@ export default function CartContents({
 }) {
   const router = useRouter();
   const [innerCartResponse, setInnerCartResponse] = useState(cartResponse);
-  const products = innerCartResponse?.data.products ?? [];
+  const products = innerCartResponse?.data?.products ?? [];
+  const cartId = innerCartResponse?.cartId || innerCartResponse?.data?._id;
   const [isClearing, setIsClearing] = useState(false);
 
   const { setNumOfCartItems } = useContext(counterContext);
+  const { data: session } = useSession();
 
-  useEffect(() => {
-    setNumOfCartItems(cartResponse?.numOfCartItems);
-    if (cartResponse != innerCartResponse) {
-      setInnerCartResponse(cartResponse);
+  async function applyCartChange(change: (token: string) => Promise<CartResponse | null>) {
+    const token = session?.user.token;
+    if (!token) {
+      toast.add({ title: "Sign in again to update your cart.", type: "error" });
+      return false;
     }
-  }, []);
+    try {
+      const response = await change(token);
+      setInnerCartResponse(response);
+      setNumOfCartItems(response?.numOfCartItems ?? 0);
+      return true;
+    } catch {
+      toast.add({ title: "Could not update your cart. Please try again.", type: "error" });
+      return false;
+    }
+  }
 
   async function removeProductFromCart(productId: string) {
-    const response = await apiServices.removeProductFromCart(productId);
-    // setState => rerender
-    setInnerCartResponse(response);
-    setNumOfCartItems(response.numOfCartItems);
+    await applyCartChange((token) => apiServices.removeProductFromCart(productId, token));
   }
 
   async function clearCart() {
     setIsClearing(true);
-    const response = await apiServices.clearCart();
-    // setState => rerender
-    setInnerCartResponse(response);
+    await applyCartChange(async (token) => {
+      await apiServices.clearCart(token);
+      return null;
+    });
     setIsClearing(false);
-    setNumOfCartItems(0);
   }
 
   async function updateProductCount(productId: string, count: number) {
-    const response = await apiServices.updateProductCount(productId, count);
-    setInnerCartResponse(response);
+    return applyCartChange((token) => apiServices.updateProductCount(productId, count, token));
   }
 
   return (
@@ -203,20 +213,14 @@ export default function CartContents({
               <p id="promo-note" className="mt-2 px-1 text-xs text-neutral-500">
                 Promo codes are not available yet.
               </p>
-              <Link
-                type="button"
-                aria-describedby="checkout-note"
-                className="mt-5 flex min-h-13 w-full items-center justify-center gap-4 rounded-full bg-black px-5 text-sm font-medium text-white opacity-50 disabled:cursor-not-allowed"
-                href={"/checkout/" + cartResponse?.cartId}
-              >
-                Go to Checkout <ArrowRight size={20} aria-hidden="true" />
-              </Link>
-              <p
-                id="checkout-note"
-                className="mt-2 text-center text-xs text-neutral-500"
-              >
-                Checkout is coming soon.
-              </p>
+              {cartId && (
+                <Link
+                  className="mt-5 flex min-h-13 w-full items-center justify-center gap-4 rounded-full bg-black px-5 text-sm font-medium text-white"
+                  href={"/checkout/" + encodeURIComponent(cartId)}
+                >
+                  Go to Checkout <ArrowRight size={20} aria-hidden="true" />
+                </Link>
+              )}
             </aside>
           </div>
         )}
@@ -226,7 +230,7 @@ export default function CartContents({
             <br />
             <br />
 
-            <Button variant="outline" onClick={clearCart}>
+            <Button variant="outline" disabled={isClearing} onClick={clearCart}>
               {isClearing ? (
                 <>
                   Clearing

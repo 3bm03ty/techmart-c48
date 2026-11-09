@@ -52,6 +52,15 @@ export interface Product {
 };
 
 
+export type CheckoutAddress = {
+    details: string;
+    phone: string;
+    city: string;
+};
+
+export type AddressInput = CheckoutAddress & { name: string };
+export type SavedAddress = AddressInput & { _id: string };
+
 export type CheckoutResponse = {
     "status": string;
     "session": {
@@ -72,7 +81,27 @@ export type SignInResponse = {
     statusMsg?: string
 }
 
+export type VerifyTokenResponse = {
+    message: "verified";
+    decoded: { id: string };
+};
+
+export type Order = {
+    _id: string;
+    id: number;
+    createdAt: string;
+    totalOrderPrice: number;
+    paymentMethodType: string;
+    isPaid: boolean;
+    isDelivered: boolean;
+    cartItems: {
+        _id: string;
+        count: number;
+        price: number;
+        product: Pick<Product, "title"> | null;
+    }[];
+};
 
 
 export type ProductsResponse = ResponseT<ProductI>
-export type ProductDetailsResponse = { data: ProductI } 
+export type ProductDetailsResponse = { data: ProductI }

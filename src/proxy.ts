@@ -15,7 +15,10 @@ export async function proxy(request: NextRequest) {
     }
 
     // Unauthenticated users cannot access protected pages
-    if (!isAuthenticated && (pathname.startsWith("/cart") || pathname.startsWith("/allorders"))) {
+    const requiresSignIn = ["/cart", "/allorders", "/addresses", "/checkout/"].some(
+        (prefix) => pathname.startsWith(prefix)
+    );
+    if (!isAuthenticated && requiresSignIn) {
         return NextResponse.redirect(new URL("/auth/signin", request.url));
     }
 
@@ -26,5 +29,5 @@ export async function proxy(request: NextRequest) {
 
 
 export const config = {
-    matcher: ['/cart', "/allorders", "/auth/signin", "/auth/signup"],
+    matcher: ['/cart', "/allorders", "/addresses", "/checkout/:cartId", "/auth/signin", "/auth/signup"],
 }
